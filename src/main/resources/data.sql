@@ -1,0 +1,2 @@
+INSERT INTO wrappings_holder (id, wrapped_url, original_url) VALUES ( NULL,'1', 'https://keep.google.com' );
+INSERT INTO wrappings_holder (id, wrapped_url, original_url) VALUES ( NULL,'2', 'https://google.com' );
