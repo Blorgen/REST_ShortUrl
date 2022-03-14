@@ -8,6 +8,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URLDecoder;
+
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+
 
 @RestController
 @RequestMapping
@@ -19,15 +23,17 @@ public class UrlController {
         this.urlRepository = urlRepository;
     }
 
-    @PostMapping(path = "/")
-    public String wrapUrl(String originalUrl){
-        String wrappedUrl = "http://localhost:8080/"+ RandomStringUtils.randomAlphabetic(5);
-        // TODO: 13.03.2022 finish
-        return wrappedUrl;
-
+    @PostMapping(path = "/", consumes = APPLICATION_JSON_VALUE)
+    public WrappingsHolder wrapUrl(@RequestBody WrappingsHolder wrappingsHolder){
+        String wrappedUrl = RandomStringUtils.randomAlphabetic(5);
+        if (wrappingsHolder!=null){
+            String urlDecoded = URLDecoder.decode(wrappingsHolder.getOriginalUrl());
+            wrappingsHolder = new WrappingsHolder(null,wrappedUrl,urlDecoded);
+            return urlRepository.save(wrappingsHolder);
+        }else return null;
     }
     @GetMapping(path = "/{wrappedUrl}")
-    public ResponseEntity unwrapUrl(@PathVariable String wrappedUrl){
+    public ResponseEntity unwrapUrl(@PathVariable("wrappedUrl") String wrappedUrl){
         WrappingsHolder wrappingsHolder = urlRepository.findByWrappedUrl(wrappedUrl);
         if (wrappedUrl != null){
             HttpHeaders httpHeaders = new HttpHeaders();
